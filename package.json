@@ -1,0 +1,13 @@
+{
+  "name": "vijay-karthik-portfolio",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Clean, minimal portfolio for Ryali Venkata Sri Vijay Karthik",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.9",
+    "nodemailer": "^6.10.1"
+  }
+}

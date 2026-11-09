@@ -17,7 +17,7 @@
     rel="stylesheet" />
 
   <!-- Main Stylesheet -->
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/style.css" />
 
   <!-- Favicon / Logo representation -->
   <link rel="icon" type="image/png" href="assets/logo.png" />
@@ -52,11 +52,17 @@
           <li><a href="#education" class="nav-link">Education</a></li>
           <li><a href="#achievements" class="nav-link">Stats</a></li>
           <li><a href="#contact" class="nav-link">Contact</a></li>
+          <li><a href="/ai" class="nav-link nav-link-ai" title="Launch AI Interactive Mode">✨ Ask AI Mode</a></li>
         </ul>
       </nav>
 
       <!-- Nav Call-To-Action Button & Mobile Toggle -->
       <div class="nav-actions">
+        <!-- Prominent AI Mode Button in Navbar -->
+        <a href="/ai" class="btn btn-ai nav-btn" title="Ask AI about Vijay Karthik">
+          <span class="ai-sparkle">✨</span>
+          <span>Ask AI</span>
+        </a>
         <!-- Direct Resume Drive Link (Editable Placeholder) -->
         <a href="https://drive.google.com/file/d/1ygzKB71wWXQ9cYzWkuiDimRYXowxL0Lp/view?usp=sharing" target="_blank"
           rel="noopener noreferrer" class="btn btn-lime nav-btn" data-config="resume-link" title="View Resume on Google Drive">
@@ -112,6 +118,11 @@
               <line x1="7" y1="17" x2="17" y2="7"></line>
               <polyline points="7 7 17 7 17 17"></polyline>
             </svg>
+          </a>
+          <!-- Prominent Ask AI About Me Hero Button -->
+          <a href="/ai" class="btn btn-ai-hero" title="Launch Interactive AI Mode to ask questions about Vijay Karthik">
+            <span class="ai-sparkle-hero">&#10022;</span>
+            <span>Ask AI About Me</span>
           </a>
           <!-- Direct Resume Drive Button in Hero -->
           <a href="https://drive.google.com/file/d/1ygzKB71wWXQ9cYzWkuiDimRYXowxL0Lp/view?usp=sharing" target="_blank"
@@ -1242,6 +1253,46 @@
           </button>
           <div id="form-feedback" class="form-feedback"></div>
         </form>
+
+        <!-- Step 2: OTP Verification Card (Shown after initiating contact) -->
+        <div class="otp-card is-hidden" id="otp-card">
+          <div class="otp-card-header">
+            <span class="otp-step-badge">Step 2 of 2: Security Verification</span>
+            <h3 class="otp-card-title">Verify Your Email Address</h3>
+            <p class="otp-card-desc">
+              We've sent a 6-digit verification code to <strong id="otp-target-email">your email</strong>.
+              Enter it below to confirm your message to Vijay Karthik.
+            </p>
+          </div>
+
+          <form id="otp-form" class="otp-form">
+            <div class="form-group">
+              <label for="otp-code-input">6-Digit Verification Code</label>
+              <input type="text" id="otp-code-input" name="otp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6"
+                placeholder="••••••" class="otp-input-field" autocomplete="one-time-code" required />
+              <span class="otp-hint">Code is valid for 10 minutes</span>
+            </div>
+
+            <button type="submit" class="btn btn-lime otp-submit-btn" id="otp-verify-btn">
+              <span>Verify &amp; Send Message</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </button>
+
+            <div class="otp-controls-row">
+              <button type="button" class="btn-text-link" id="otp-resend-btn" disabled>
+                Resend code (<span id="otp-resend-countdown">60</span>s)
+              </button>
+              <button type="button" class="btn-text-link" id="otp-back-btn">
+                &larr; Edit Message
+              </button>
+            </div>
+
+            <div id="otp-feedback" class="form-feedback"></div>
+          </form>
+        </div>
       </div>
     </div>
   </section>
@@ -1271,6 +1322,7 @@
           <a href="#education">Education</a>
           <a href="#achievements">Stats</a>
           <a href="#contact">Contact</a>
+          <a href="/ai" class="footer-ai-link">✨ Ask AI Mode</a>
         </div>
       </div>
 
@@ -1339,10 +1391,10 @@
   <div id="toast" class="toast-notification" role="status" aria-live="polite"></div>
 
   <!-- Configuration (Single Source of Truth) -->
-  <script src="config.js"></script>
+  <script src="js/config.js"></script>
 
   <!-- JavaScript -->
-  <script src="script.js"></script>
+  <script src="js/script.js"></script>
 </body>
 
 </html>

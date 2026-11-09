@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vijay Karthik AI — Interactive Portfolio Assistant</title>
+  <meta name="description"
+    content="Ask Vijay Karthik's personal AI representative about his backend projects, RAG pipelines, technical skills, competitive programming, and education." />
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+
+  <!-- Google Fonts: Space Grotesk & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <!-- Base Theme & AI Stylesheet -->
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/ai.css" />
+</head>
+
+<body class="ai-body">
+
+  <!-- ========================================================
+       AI TOP NAVIGATION HEADER
+       ======================================================== -->
+  <header class="ai-header">
+    <div class="ai-header-inner">
+      <!-- Left: Back to Portfolio -->
+      <a href="/" class="ai-back-btn" title="Return to main portfolio">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Portfolio</span>
+      </a>
+
+      <!-- Center: AI Identity & Status -->
+      <div class="ai-header-brand">
+        <div class="ai-avatar-wrap">
+          <img src="assets/logo.png" alt="Vijay Karthik" class="ai-header-avatar"
+            onerror="this.style.display='none'; document.getElementById('ai-avatar-fallback').style.display='flex';" />
+          <div class="ai-avatar-fallback" id="ai-avatar-fallback" style="display: none;">VK</div>
+          <span class="ai-status-indicator" title="AI Assistant Online"></span>
+        </div>
+        <div class="ai-header-info">
+          <div class="ai-header-title">
+            <span>Vijay Karthik AI</span>
+          </div>
+          <span class="ai-header-subtitle">Portfolio Representative</span>
+        </div>
+      </div>
+
+      <!-- Right: Action Buttons -->
+      <div class="ai-header-actions">
+        <button type="button" class="ai-action-btn" id="clear-chat-btn" title="Start a fresh conversation">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+          </svg>
+          <span class="btn-text">New Chat</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================
+       MAIN CHAT CONTAINER
+       ======================================================== -->
+  <main class="ai-main">
+    <div class="ai-chat-viewport" id="chat-viewport">
+      <div class="ai-chat-container">
+
+        <!-- Welcome State (Displayed before user starts chatting) -->
+        <section class="ai-welcome-card" id="welcome-state">
+          <div class="ai-welcome-badge">
+            <span class="sparkle-icon">&#10022;</span>
+            <span>AI MODE ACTIVE</span>
+          </div>
+
+          <h1 class="ai-welcome-title">Ask Me Anything About Vijay Karthik</h1>
+          <p class="ai-welcome-desc">
+            I am Vijay's dedicated AI assistant grounded in his real-world engineering projects,
+            RAG pipelines, competitive programming stats, and education. What would you like to know?
+          </p>
+
+          <!-- Suggested Question Prompt Chips -->
+          <div class="ai-suggestions-block">
+            <span class="ai-suggestions-label">Popular topics to explore:</span>
+            <div class="ai-chips-grid">
+              <button type="button" class="ai-chip" data-prompt="What did Vijay build in his DevMeter project?">
+                <span class="chip-icon">&#128640;</span>
+                <span>What did Vijay build in DevMeter?</span>
+              </button>
+              <button type="button" class="ai-chip" data-prompt="Explain Vijay's RAG pipeline at HiRekruit.">
+                <span class="chip-icon">&#129504;</span>
+                <span>Explain his RAG pipeline at HiRekruit</span>
+              </button>
+              <button type="button" class="ai-chip" data-prompt="What are Vijay's LeetCode and CodeChef ratings?">
+                <span class="chip-icon">&#128202;</span>
+                <span>What are his coding stats & ratings?</span>
+              </button>
+              <button type="button" class="ai-chip" data-prompt="What is Vijay's primary backend tech stack?">
+                <span class="chip-icon">&#128736;&#65039;</span>
+                <span>What is his primary backend stack?</span>
+              </button>
+              <button type="button" class="ai-chip" data-prompt="Tell me about Vijay's education, university, and CGPA.">
+                <span class="chip-icon">&#127891;</span>
+                <span>Tell me about his university & CGPA</span>
+              </button>
+              <button type="button" class="ai-chip" data-prompt="Is Vijay available for backend internships or hire?">
+                <span class="chip-icon">&#128188;</span>
+                <span>Is Vijay open to internships or hire?</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Message Stream (Dynamically populated) -->
+        <div class="ai-messages-list" id="messages-list" aria-live="polite"></div>
+
+        <!-- Typing Loading Indicator (Hidden by default) -->
+        <div class="ai-typing-indicator is-hidden" id="typing-indicator" aria-hidden="true">
+          <div class="ai-msg-avatar">
+            <span>VK</span>
+          </div>
+          <div class="ai-typing-bubble">
+            <span class="ai-typing-dot"></span>
+            <span class="ai-typing-dot"></span>
+            <span class="ai-typing-dot"></span>
+            <span class="ai-typing-text">Vijay AI is thinking...</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ========================================================
+         STICKY BOTTOM CHAT INPUT BAR
+         ======================================================== -->
+    <footer class="ai-input-area">
+      <div class="ai-input-container">
+        <form class="ai-chat-form" id="chat-form">
+          <div class="ai-textarea-wrapper">
+            <textarea id="chat-input" name="message" rows="1"
+              placeholder="Ask anything about Vijay's projects, experience, or skills..."
+              aria-label="Message to Vijay Karthik AI" required></textarea>
+
+            <button type="submit" class="ai-send-btn" id="send-btn" aria-label="Send message" title="Send message (Enter)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
+            </button>
+          </div>
+        </form>
+
+        <div class="ai-disclaimer">
+          <span>Strict Scope: Vijay AI answers questions exclusively about Vijay Karthik's professional profile &amp; engineering work.</span>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Markdown Parser Library -->
+  <script src="js/vendor/marked.min.js"></script>
+
+  <!-- AI Chat Client Script -->
+  <script src="js/ai.js"></script>
+</body>
+
+</html>
+

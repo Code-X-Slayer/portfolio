@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import 'dotenv/config';
 import contactHandler from './api/contact.js';
+import chatHandler, { getGroqApiKeys } from './api/chat.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -62,8 +63,52 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // 2. Static File Serving
-  let filePath = path.join(__dirname, url.pathname === '/' ? 'index.html' : url.pathname);
+  // 2. API Route: /api/chat (Groq LLM AI Mode)
+  if (url.pathname === '/api/chat') {
+    if (req.method !== 'POST') {
+      res.writeHead(405, { 'Content-Type': 'application/json' });
+      return res.end(JSON.stringify({ success: false, message: 'Method Not Allowed' }));
+    }
+
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk.toString();
+    });
+
+    req.on('end', async () => {
+      try {
+        req.body = JSON.parse(body || '{}');
+
+        const resAdapter = {
+          status: (code) => {
+            res.statusCode = code;
+            return resAdapter;
+          },
+          json: (data) => {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify(data));
+          }
+        };
+
+        await chatHandler(req, resAdapter);
+      } catch (err) {
+        console.error('Server error handling /api/chat:', err);
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, message: err.message || 'Server error' }));
+      }
+    });
+    return;
+  }
+
+  // 3. Static File Serving (with clean URL handling for / and /ai)
+  let requestPath = url.pathname;
+  if (requestPath === '/') {
+    requestPath = 'index.html';
+  } else if (requestPath === '/ai' || requestPath === '/ai/') {
+    requestPath = 'ai.html';
+  }
+
+  let filePath = path.join(__dirname, requestPath);
 
   // Security: prevent directory traversal
   if (!filePath.startsWith(__dirname)) {
@@ -86,11 +131,15 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, () => {
+  const groqKeys = getGroqApiKeys();
   console.log(`\n==================================================`);
   console.log(`🚀 Portfolio server running at: http://localhost:${PORT}`);
+  console.log(`🤖 AI Mode Chat available at: http://localhost:${PORT}/ai`);
+  console.log(`💬 AI Chat API endpoint ready at: http://localhost:${PORT}/api/chat`);
+  console.log(`🔑 Groq API Keys detected: ${groqKeys.length} configured`);
   console.log(`📧 Contact API endpoint ready at: http://localhost:${PORT}/api/contact`);
   console.log(`🔑 GMAIL_USER: ${process.env.GMAIL_USER ? process.env.GMAIL_USER : 'Not set (check .env)'}`);
-  console.log(`🔑 GMAIL_PASS: ${process.env.GMAIL_PASS ? '********' : 'Not set (check .env)'}`);
   console.log(`==================================================\n`);
 });
 
+export default server;

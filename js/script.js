@@ -299,11 +299,47 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------------------------------------------------------------
-  // 7. CONTACT FORM SUBMISSION (Node.js/Vercel SMTP with smart fallback)
+  // 7. CONTACT FORM SUBMISSION & EMAIL OTP VERIFICATION
   // ----------------------------------------------------------------------------
   const contactForm = document.getElementById('contact-form');
   const formFeedback = document.getElementById('form-feedback');
+  const otpCard = document.getElementById('otp-card');
+  const otpForm = document.getElementById('otp-form');
+  const otpInput = document.getElementById('otp-code-input');
+  const otpTargetEmail = document.getElementById('otp-target-email');
+  const otpVerifyBtn = document.getElementById('otp-verify-btn');
+  const otpResendBtn = document.getElementById('otp-resend-btn');
+  const otpResendCountdown = document.getElementById('otp-resend-countdown');
+  const otpBackBtn = document.getElementById('otp-back-btn');
+  const otpFeedback = document.getElementById('otp-feedback');
 
+  let currentVerificationToken = null;
+  let resendCountdownTimer = null;
+
+  function startResendCooldown(seconds = 60) {
+    if (!otpResendBtn) return;
+    if (resendCountdownTimer) clearInterval(resendCountdownTimer);
+
+    let remaining = seconds;
+    otpResendBtn.disabled = true;
+    if (otpResendCountdown) otpResendCountdown.textContent = remaining;
+    otpResendBtn.innerHTML = `Resend code (<span id="otp-resend-countdown">${remaining}</span>s)`;
+
+    resendCountdownTimer = setInterval(() => {
+      remaining -= 1;
+      const countSpan = document.getElementById('otp-resend-countdown');
+      if (countSpan) countSpan.textContent = remaining;
+
+      if (remaining <= 0) {
+        clearInterval(resendCountdownTimer);
+        resendCountdownTimer = null;
+        otpResendBtn.disabled = false;
+        otpResendBtn.innerHTML = `Resend code`;
+      }
+    }, 1000);
+  }
+
+  // --- Step 1: Submit Initial Contact Form (Triggers OTP Send) ---
   if (contactForm) {
     contactForm.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -355,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Visual feedback: Sending state
       if (formFeedback) {
-        formFeedback.textContent = 'Sending email via SMTP server...';
+        formFeedback.textContent = 'Verifying email & sending 6-digit confirmation code...';
         formFeedback.className = 'form-feedback';
       }
       if (submitBtn) submitBtn.disabled = true;
@@ -366,27 +402,46 @@ document.addEventListener('DOMContentLoaded', () => {
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ name, email, subject, message })
+          body: JSON.stringify({
+            action: 'send_otp',
+            name,
+            email,
+            subject,
+            message
+          })
         });
 
         const data = await response.json().catch(() => null);
 
-        if (response.ok && data && data.success) {
-          if (formFeedback) {
-            formFeedback.textContent = '✓ Message sent successfully! An email confirmation has been sent to your address.';
-            formFeedback.className = 'form-feedback success';
+        if (response.ok && data && data.success && data.step === 'otp_required') {
+          // Success: Store verification token & transition to OTP card
+          currentVerificationToken = data.verificationToken;
+
+          if (formFeedback) formFeedback.textContent = '';
+          if (otpTargetEmail) otpTargetEmail.textContent = email;
+
+          // Transition to OTP verification card
+          contactForm.classList.add('is-hidden');
+          if (otpCard) {
+            otpCard.classList.remove('is-hidden');
           }
-          showToast('✓ Message sent successfully!');
-          contactForm.reset();
+
+          if (otpInput) {
+            otpInput.value = '';
+            otpInput.focus();
+          }
+
+          startResendCooldown(60);
+          showToast('✓ 6-Digit code sent to your email!');
         } else {
-          // Explicit SMTP error message from backend
+          // Explicit error message from backend
           const errorMsg = (data && data.message) ? data.message : `Server error (HTTP ${response.status})`;
           if (formFeedback) {
             formFeedback.textContent = `❌ ${errorMsg}`;
             formFeedback.className = 'form-feedback error';
           }
-          console.error('SMTP Submission Failed:', data);
-          showToast('⚠️ Failed to send via SMTP');
+          console.error('Submission Error:', data);
+          showToast('⚠️ Could not send verification code');
         }
       } catch (networkError) {
         // True network error: server is down or unreachable
@@ -407,11 +462,149 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
       } finally {
         if (submitBtn) submitBtn.disabled = false;
-        setTimeout(() => {
-          if (formFeedback && formFeedback.classList.contains('success')) {
-            formFeedback.textContent = '';
+      }
+    });
+  }
+
+  // --- Step 2: Submit OTP Verification Code ---
+  if (otpForm) {
+    otpForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const enteredOtp = otpInput ? otpInput.value.trim() : '';
+
+      if (!enteredOtp || enteredOtp.length !== 6) {
+        if (otpFeedback) {
+          otpFeedback.textContent = 'Please enter the complete 6-digit code sent to your inbox.';
+          otpFeedback.className = 'form-feedback error';
+        }
+        return;
+      }
+
+      if (!currentVerificationToken) {
+        if (otpFeedback) {
+          otpFeedback.textContent = 'Verification session expired. Please edit and submit again.';
+          otpFeedback.className = 'form-feedback error';
+        }
+        return;
+      }
+
+      if (otpFeedback) {
+        otpFeedback.textContent = 'Verifying code & delivering message...';
+        otpFeedback.className = 'form-feedback';
+      }
+      if (otpVerifyBtn) otpVerifyBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            action: 'verify_otp',
+            verificationToken: currentVerificationToken,
+            otp: enteredOtp
+          })
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (response.ok && data && data.success) {
+          if (otpFeedback) {
+            otpFeedback.textContent = '✓ Email verified! Your message has been delivered to Vijay Karthik.';
+            otpFeedback.className = 'form-feedback success';
           }
-        }, 8000);
+          showToast('✓ Message delivered successfully!');
+
+          // Reset forms
+          currentVerificationToken = null;
+          if (contactForm) contactForm.reset();
+
+          // After 4 seconds, reset view back to clean contact form
+          setTimeout(() => {
+            if (otpCard) otpCard.classList.add('is-hidden');
+            if (contactForm) contactForm.classList.remove('is-hidden');
+            if (otpFeedback) otpFeedback.textContent = '';
+          }, 4000);
+        } else {
+          const errorMsg = (data && data.message) ? data.message : 'Verification failed. Please try again.';
+          if (otpFeedback) {
+            otpFeedback.textContent = `❌ ${errorMsg}`;
+            otpFeedback.className = 'form-feedback error';
+          }
+          showToast('⚠️ Incorrect verification code');
+        }
+      } catch (err) {
+        console.error('OTP verification error:', err);
+        if (otpFeedback) {
+          otpFeedback.textContent = '❌ Network connection error. Please try again.';
+          otpFeedback.className = 'form-feedback error';
+        }
+      } finally {
+        if (otpVerifyBtn) otpVerifyBtn.disabled = false;
+      }
+    });
+  }
+
+  // --- Step 2 Controls: Edit Message / Back ---
+  if (otpBackBtn) {
+    otpBackBtn.addEventListener('click', () => {
+      if (otpCard) otpCard.classList.add('is-hidden');
+      if (contactForm) contactForm.classList.remove('is-hidden');
+      if (otpFeedback) otpFeedback.textContent = '';
+      if (formFeedback) formFeedback.textContent = '';
+    });
+  }
+
+  // --- Step 2 Controls: Resend OTP Code ---
+  if (otpResendBtn) {
+    otpResendBtn.addEventListener('click', async () => {
+      if (!currentVerificationToken || otpResendBtn.disabled) return;
+
+      if (otpFeedback) {
+        otpFeedback.textContent = 'Sending a fresh verification code...';
+        otpFeedback.className = 'form-feedback';
+      }
+      otpResendBtn.disabled = true;
+
+      try {
+        const response = await fetch('/api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            action: 'resend_otp',
+            verificationToken: currentVerificationToken
+          })
+        });
+
+        const data = await response.json().catch(() => null);
+
+        if (response.ok && data && data.success) {
+          if (data.verificationToken) {
+            currentVerificationToken = data.verificationToken;
+          }
+          if (otpFeedback) {
+            otpFeedback.textContent = '✓ A fresh 6-digit code has been sent to your email.';
+            otpFeedback.className = 'form-feedback success';
+          }
+          showToast('✓ Fresh code sent to your email!');
+          startResendCooldown(60);
+        } else {
+          const errorMsg = (data && data.message) ? data.message : 'Failed to resend code.';
+          if (otpFeedback) {
+            otpFeedback.textContent = `❌ ${errorMsg}`;
+            otpFeedback.className = 'form-feedback error';
+          }
+        }
+      } catch (err) {
+        console.error('Resend error:', err);
+        if (otpFeedback) {
+          otpFeedback.textContent = '❌ Network error resending code.';
+          otpFeedback.className = 'form-feedback error';
+        }
       }
     });
   }

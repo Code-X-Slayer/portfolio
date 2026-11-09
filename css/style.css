@@ -227,6 +227,70 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* --------------------------------------------------------------------------
+   AI MODE PROMINENT BUTTONS
+   -------------------------------------------------------------------------- */
+.btn-ai-hero {
+  background-color: var(--color-dark);
+  color: var(--color-lime);
+  border: 2px solid var(--color-dark);
+  font-weight: 700;
+  box-shadow: 0 5px 0 var(--color-lime);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn-ai-hero:hover {
+  background-color: #000000;
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 7px 0 var(--color-lime);
+}
+
+.btn-ai-hero .ai-sparkle-hero {
+  color: var(--color-lime);
+  font-size: 1.15rem;
+  display: inline-block;
+  animation: sparkle-rotate 3s infinite linear;
+}
+
+@keyframes sparkle-rotate {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+.btn-ai {
+  background-color: var(--color-dark);
+  color: var(--color-lime);
+  border: 1.5px solid var(--color-dark);
+  font-weight: 700;
+  box-shadow: 0 3px 0 var(--color-border);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-ai:hover {
+  background-color: var(--color-lime);
+  color: var(--color-dark);
+  box-shadow: 0 4px 0 var(--color-dark);
+  transform: translateY(-1px);
+}
+
+.nav-link-ai {
+  color: #059669 !important;
+  font-weight: 700 !important;
+}
+
+.footer-ai-link {
+  color: var(--color-lime) !important;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
    5. SITE HEADER & NAVIGATION
    -------------------------------------------------------------------------- */
 .site-header {
@@ -1690,6 +1754,118 @@ h1, h2, h3, h4, h5, h6 {
 
 .form-feedback.error {
   color: #DC2626;
+}
+
+/* --------------------------------------------------------------------------
+   14B. OTP EMAIL VERIFICATION CARD
+   -------------------------------------------------------------------------- */
+.is-hidden {
+  display: none !important;
+}
+
+.otp-card {
+  background-color: var(--color-white);
+  border: var(--border-thick);
+  border-radius: var(--border-radius-card);
+  padding: 32px 28px;
+  box-shadow: var(--shadow-neo);
+  animation: fadeInOtp 0.25s ease-in;
+}
+
+@keyframes fadeInOtp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.otp-card-header {
+  margin-bottom: 20px;
+}
+
+.otp-step-badge {
+  display: inline-block;
+  background-color: var(--color-lime);
+  color: var(--color-dark);
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: var(--border-radius-pill);
+  border: 1.5px solid var(--color-dark);
+  margin-bottom: 10px;
+}
+
+.otp-card-title {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-dark);
+  margin: 0 0 8px 0;
+}
+
+.otp-card-desc {
+  font-size: 0.9rem;
+  color: var(--color-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.otp-input-field {
+  font-family: Consolas, monospace !important;
+  font-size: 1.6rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 8px !important;
+  text-align: center !important;
+  padding: 12px !important;
+  background-color: #F9F9FB !important;
+}
+
+.otp-hint {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--color-muted);
+  margin-top: 6px;
+  text-align: center;
+}
+
+.otp-submit-btn {
+  width: 100%;
+  margin-top: 14px;
+  justify-content: center;
+}
+
+.otp-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed #E5E7EB;
+}
+
+.btn-text-link {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-dark);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 4px 0;
+  transition: color var(--transition-fast);
+}
+
+.btn-text-link:hover:not(:disabled) {
+  color: #059669;
+}
+
+.btn-text-link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  text-decoration: none;
 }
 
 /* --------------------------------------------------------------------------

@@ -4,6 +4,8 @@
   "type": "module",
   "description": "Clean, minimal portfolio for Ryali Venkata Sri Vijay Karthik",
   "scripts": {
+    "build": "echo Ready",
+    "dev": "node server.js",
     "start": "node server.js"
   },
   "dependencies": {

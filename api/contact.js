@@ -1,4 +1,4 @@
-import { validateEmailAddress } from './services/emailValidator.js';
+import { validateEmailAddress } from '../lib/emailValidator.js';
 import {
   hashOtp,
   createVerificationToken,
@@ -14,8 +14,8 @@ import {
   recordFailedAttempt,
   clearAttempts,
   verifyOtpHash
-} from './services/otpService.js';
-import { sendOtpEmail, sendVerifiedLeadEmails } from './services/mailer.js';
+} from '../lib/otpService.js';
+import { sendOtpEmail, sendVerifiedLeadEmails } from '../lib/mailer.js';
 
 /**
  * ==============================================================================

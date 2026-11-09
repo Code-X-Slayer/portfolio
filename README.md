@@ -34,14 +34,14 @@ portfolio/
 │       └── marked.min.js      # Vendor Markdown parser (UMD)
 ├── api/
 │   ├── contact.js             # Serverless HTTP controller for /api/contact
-│   ├── chat.js                # Serverless HTTP controller for /api/chat
-│   └── services/
-│       ├── emailValidator.js  # RFC regex, disposable domain filter, DNS MX lookup
-│       ├── emailTemplates.js  # Positivus-branded responsive HTML email templates
-│       ├── otpService.js      # Crypto HMAC tokens, attempt tracking & replay protection
-│       ├── mailer.js          # Nodemailer SMTP transporter & dispatch helper
-│       ├── groqService.js     # Groq API key rotation, round-robin & rate-limit fallback
-│       └── systemPrompt.js    # Grounded persona, recruiter JD evaluation & scope rules
+│   └── chat.js                # Serverless HTTP controller for /api/chat
+├── lib/
+│   ├── emailValidator.js      # RFC regex, disposable domain filter, DNS MX lookup
+│   ├── emailTemplates.js      # Positivus-branded responsive HTML email templates
+│   ├── otpService.js          # Crypto HMAC tokens, attempt tracking & replay protection
+│   ├── mailer.js              # Nodemailer SMTP transporter & dispatch helper
+│   ├── groqService.js         # Groq API key rotation, round-robin & rate-limit fallback
+│   └── systemPrompt.js        # Grounded persona, recruiter JD evaluation & scope rules
 ├── index.html                 # Main portfolio page entrypoint
 ├── ai.html                    # AI Mode chat page entrypoint
 ├── server.js                  # Development server (serves static assets + routes /ai, /api/*)

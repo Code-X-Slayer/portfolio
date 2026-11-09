@@ -1,5 +1,5 @@
-import { SYSTEM_PROMPT } from './services/systemPrompt.js';
-import { callGroqWithRotation, getGroqApiKeys } from './services/groqService.js';
+import { SYSTEM_PROMPT } from '../lib/systemPrompt.js';
+import { callGroqWithRotation, getGroqApiKeys } from '../lib/groqService.js';
 
 // Re-export for server startup reporting or test suites
 export { SYSTEM_PROMPT, getGroqApiKeys };

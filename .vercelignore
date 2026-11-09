@@ -1,0 +1,13 @@
+# Local dev server (not needed on Vercel)
+server.js
+
+# Local environment variables
+.env
+.env.local
+.env.*.local
+
+# Git and dev metadata
+.git
+.github
+*.log
+

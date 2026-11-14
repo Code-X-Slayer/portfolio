@@ -31,7 +31,7 @@ const portfolioConfig = {
   // 2. DOCUMENT & DRIVE LINKS (Edit your drive links here in one place!)
   links: {
     // 🔗 Main Resume Link (Used in Navbar, Hero, and Footer)
-    resumeDriveLink: "https://drive.google.com/file/d/1ygzKB71wWXQ9cYzWkuiDimRYXowxL0Lp/view?usp=sharing",
+    resumeDriveLink: "https://drive.google.com/file/d/1LOaLxvXS9rkv1yYi5dGVVBkLjjcoy9-W/view?usp=sharing",
 
     // 🔗 Verified Transcripts & Credentials
     transcriptDriveLink: "https://drive.google.com/file/d/1vg2_GbXPfvPwKpVxuqB-70T-YmIzf2eG/view?usp=sharing",
